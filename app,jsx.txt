@@ -1,0 +1,2580 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Menu,
+  X,
+  ShoppingCart,
+  Search,
+  Heart,
+  TrendingUp,
+  Shield,
+  Truck,
+  CreditCard,
+  Smartphone,
+  Banknote,
+  Facebook,
+  Instagram,
+  Twitter,
+  Upload,
+  Trash2,
+  Edit,
+  Lock,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+
+export default function AromaLuxe() {
+  
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [cart, setCart] = useState<any[]>([]);
+  const [showCart, setShowCart] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const [showSales, setShowSales] = useState(false);
+  const [showOrders, setShowOrders] = useState(false);
+  const [showFavorites, setShowFavorites] = useState(false);
+  const [showProductDetail, setShowProductDetail] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [showMessages, setShowMessages] = useState(false);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [showChat, setShowChat] = useState(false);
+  const [chatInput, setChatInput] = useState("");
+  const [orders, setOrders] = useState<any[]>([]);
+  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
+  const [showAddressSuggestions, setShowAddressSuggestions] = useState(false);
+  
+  
+  const [customerInfo, setCustomerInfo] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    zipCode: "",
+    country: "Italia",
+  });
+  const [products, setProducts] = useState([
+    {
+      id: 1,
+      name: "Oud Imperiale",
+      price: "€129.99",
+      originalPrice: "€179.99",
+      badge: "SCONTO",
+      category: "Uomo",
+      onSale: true,
+      image: "https://placeholder-image-service.onrender.com/image/400x400?prompt=Luxury perfume bottle with gold accents and dark amber liquid on white background elegant product photography&id=saadhachima@gmail.com&customer_id=cus_TBNECb2kaet2jU",
+      alt: "Bottiglia di profumo di lusso con accenti dorati e liquido ambra scuro su sfondo bianco"
+    },
+    {
+      id: 2,
+      name: "Rosa Nobile",
+      price: "€89.99",
+      originalPrice: null,
+      badge: "NUOVO",
+      category: "Donna",
+      onSale: false,
+      image: "https://placeholder-image-service.onrender.com/image/400x400?prompt=Elegant pink perfume bottle with floral design and crystal cap on white background luxury product shot&id=saadhachima@gmail.com&customer_id=cus_TBNECb2kaet2jU",
+      alt: "Bottiglia di profumo rosa elegante con design floreale e tappo in cristallo su sfondo bianco"
+    },
+    {
+      id: 3,
+      name: "Legno Prezioso",
+      price: "€74.99",
+      originalPrice: "€99.99",
+      badge: "SCONTO",
+      category: "Uomo",
+      onSale: true,
+      image: "https://placeholder-image-service.onrender.com/image/400x400?prompt=Wooden textured perfume bottle with minimalist design brown tones on white background premium product photography&id=saadhachima@gmail.com&customer_id=cus_TBNECb2kaet2jU",
+      alt: "Bottiglia di profumo con texture legno e design minimalista toni marroni su sfondo bianco"
+    },
+    {
+      id: 4,
+      name: "Vetiver Intenso",
+      price: "€95.99",
+      originalPrice: null,
+      badge: "TREND",
+      category: "Unisex",
+      onSale: false,
+      image: "https://placeholder-image-service.onrender.com/image/400x400?prompt=Modern geometric perfume bottle with green liquid and metallic accents on white background contemporary product shot&id=saadhachima@gmail.com&customer_id=cus_TBNECb2kaet2jU",
+      alt: "Bottiglia di profumo geometrica moderna con liquido verde e accenti metallici su sfondo bianco"
+    },
+    {
+      id: 5,
+      name: "Ambra Noir",
+      price: "€109.99",
+      originalPrice: "€149.99",
+      badge: "SCONTO",
+      category: "Donna",
+      onSale: true,
+      image: "https://placeholder-image-service.onrender.com/image/400x400?prompt=Black matte perfume bottle with gold details and magnetic cap on white background luxury fragrance product photography&id=saadhachima@gmail.com&customer_id=cus_TBNECb2kaet2jU",
+      alt: "Bottiglia di profumo nera opaca con dettagli oro e tappo magnetico su sfondo bianco"
+    },
+    {
+      id: 6,
+      name: "Iris Divino",
+      price: "€84.99",
+      originalPrice: null,
+      badge: "NUOVO",
+      category: "Donna",
+      onSale: false,
+      image: "https://placeholder-image-service.onrender.com/image/400x400?prompt=Purple gradient perfume bottle with silver accents and iris flower design on white background elegant product shot&id=saadhachima@gmail.com&customer_id=cus_TBNECb2kaet2jU",
+      alt: "Bottiglia di profumo con sfumature viola accenti argento e design fiore iris su sfondo bianco"
+    },
+  ]);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    price: "",
+    originalPrice: "",
+    badge: "NUOVO",
+    category: "Uomo",
+    onSale: false,
+    image: "",
+    alt: "",
+  });
+
+  const toggleFavorite = (productId: number) => {
+    if (favorites.includes(productId)) {
+      setFavorites(favorites.filter(id => id !== productId));
+    } else {
+      setFavorites([...favorites, productId]);
+    }
+  };
+
+  const filteredProducts = products.filter(product => 
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleAddressChange = (value: string) => {
+    setCustomerInfo({ ...customerInfo, address: value });
+    if (value.length > 2) {
+      const suggestions = [
+        `Via ${value} 1, Roma`,
+        `Via ${value} 10, Milano`,
+        `Corso ${value}, Torino`,
+        `Piazza ${value}, Firenze`,
+        `Viale ${value} 5, Napoli`,
+      ];
+      setAddressSuggestions(suggestions);
+      setShowAddressSuggestions(true);
+    } else {
+      setShowAddressSuggestions(false);
+    }
+  };
+
+  
+
+  const handleAdminLogin = () => {
+    // Password amministratore: Ti9filahgaditwsal2028
+    if (adminPassword === "Ti9filahgaditwsal2028") {
+      setIsAdmin(true);
+      setShowAdminLogin(false);
+      setShowAdminPanel(true);
+      setAdminPassword("");
+    } else {
+      alert("Password errata!");
+    }
+  };
+
+  const handleAddProduct = () => {
+    if (newProduct.name && newProduct.price && newProduct.image && newProduct.category) {
+      const product = {
+        id: products.length + 1,
+        ...newProduct,
+      };
+      setProducts([...products, product]);
+      setNewProduct({
+        name: "",
+        price: "",
+        originalPrice: "",
+        badge: "NUOVO",
+        category: "Uomo",
+        onSale: false,
+        image: "",
+        alt: "",
+      });
+      alert("Prodotto aggiunto con successo!");
+    } else {
+      alert("Compila tutti i campi obbligatori!");
+    }
+  };
+
+  const handleDeleteProduct = (id: number) => {
+    if (confirm("Sei sicuro di voler eliminare questo prodotto?")) {
+      setProducts(products.filter((p) => p.id !== id));
+    }
+  };
+
+  const handleEditProduct = (product: any) => {
+    setEditingProduct(product);
+  };
+
+  const handleUpdateProduct = () => {
+    if (editingProduct) {
+      setProducts(
+        products.map((p) =>
+          p.id === editingProduct.id ? editingProduct : p
+        )
+      );
+      setEditingProduct(null);
+      alert("Prodotto aggiornato con successo!");
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, isEdit: boolean = false) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (isEdit && editingProduct) {
+          setEditingProduct({ ...editingProduct, image: reader.result as string });
+        } else {
+          setNewProduct({ ...newProduct, image: reader.result as string });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const addToCart = (product: any) => {
+    const existingItem = cart.find((item) => item.id === product.id);
+    if (existingItem) {
+      setCart(
+        cart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
+      );
+    } else {
+      setCart([...cart, { ...product, quantity: 1 }]);
+    }
+    setCartCount(cartCount + 1);
+  };
+
+  const removeFromCart = (productId: number) => {
+    const item = cart.find((item) => item.id === productId);
+    if (item) {
+      if (item.quantity > 1) {
+        setCart(
+          cart.map((item) =>
+            item.id === productId
+              ? { ...item, quantity: item.quantity - 1 }
+              : item
+          )
+        );
+        setCartCount(cartCount - 1);
+      } else {
+        setCart(cart.filter((item) => item.id !== productId));
+        setCartCount(cartCount - 1);
+      }
+    }
+  };
+
+  const deleteFromCart = (productId: number) => {
+    const item = cart.find((item) => item.id === productId);
+    if (item) {
+      setCart(cart.filter((item) => item.id !== productId));
+      setCartCount(cartCount - item.quantity);
+    }
+  };
+
+  const getCartTotal = () => {
+    return cart.reduce((total, item) => {
+      const price = parseFloat(item.price.replace("€", ""));
+      return total + price * item.quantity;
+    }, 0);
+  };
+
+  const handleCheckout = () => {
+    if (cart.length === 0) {
+      alert("Il carrello è vuoto!");
+      return;
+    }
+    setShowCart(false);
+    setShowCheckout(true);
+  };
+
+  const handlePlaceOrder = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (
+      !customerInfo.name ||
+      !customerInfo.email ||
+      !customerInfo.phone ||
+      !customerInfo.address ||
+      !customerInfo.city ||
+      !customerInfo.zipCode
+    ) {
+      alert("Per favore compila tutti i campi obbligatori!");
+      return;
+    }
+    
+    const confirmMessage = `Confermi le tue informazioni?\n\n` +
+      `Nome: ${customerInfo.name}\n` +
+      `Email: ${customerInfo.email}\n` +
+      `Telefono: ${customerInfo.phone}\n` +
+      `Indirizzo: ${customerInfo.address}\n` +
+      `Città: ${customerInfo.city}\n` +
+      `CAP: ${customerInfo.zipCode}\n\n` +
+      `Totale: €${getCartTotal().toFixed(2)}`;
+    
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+    
+    // Salva l'ordine
+    const newOrder = {
+      id: Date.now(),
+      date: new Date().toLocaleString('it-IT'),
+      customer: { ...customerInfo },
+      items: [...cart],
+      total: getCartTotal(),
+      status: "In elaborazione"
+    };
+    setOrders([newOrder, ...orders]);
+    
+    setShowCheckout(false);
+    setOrderPlaced(true);
+    setCart([]);
+    setCartCount(0);
+    
+    // Abilita la chat per questo cliente
+    localStorage.setItem('hasOrdered', 'true');
+    localStorage.setItem('customerEmail', customerInfo.email);
+  };
+
+  useEffect(() => {
+    if (orderPlaced) {
+      const timer = setTimeout(() => {
+        setOrderPlaced(false);
+        setCustomerInfo({
+          name: "",
+          email: "",
+          phone: "",
+          address: "",
+          city: "",
+          zipCode: "",
+          country: "Italia",
+        });
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [orderPlaced]);
+
+  const categories = [
+    { name: "Fragranze Uomo", count: 145 },
+    { name: "Fragranze Donna", count: 230 },
+    { name: "Unisex", count: 180 },
+    { name: "Nicchia", count: 95 },
+    { name: "Set Regalo", count: 120 },
+    { name: "Limited Edition", count: 45 },
+  ];
+
+  const paymentMethods = [
+    { icon: CreditCard, name: "Carte di Credito/Debito" },
+    { icon: Smartphone, name: "PayPal & Apple Pay" },
+    { icon: Banknote, name: "Bonifico Bancario" },
+    { icon: CreditCard, name: "Pagamento alla Consegna" },
+  ];
+
+  const features = [
+    {
+      icon: Truck,
+      title: "Spedizione Gratuita",
+      description: "Su tutti gli ordini",
+    },
+    {
+      icon: Shield,
+      title: "Pagamenti Sicuri",
+      description: "Tutti i metodi accettati",
+    },
+    {
+      icon: TrendingUp,
+      title: "Nuovi Arrivi",
+      description: "Ogni settimana",
+    },
+  ];
+
+  return (
+    <main className="min-h-screen">
+      
+
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center">
+              <h1 className="text-2xl font-black text-white">
+                AromaLuxe
+              </h1>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-8">
+                <a
+                  href="#nuovi-arrivi"
+                  className="text-white transition-colors hover:text-primary"
+                >
+                  Nuovi Arrivi
+                </a>
+                <a
+                  href="#uomo"
+                  className="text-white transition-colors hover:text-primary"
+                >
+                  Uomo
+                </a>
+                <a
+                  href="#donna"
+                  className="text-white transition-colors hover:text-primary"
+                >
+                  Donna
+                </a>
+                <a
+                  href="#saldi"
+                  className="text-white transition-colors hover:text-primary"
+                >
+                  Saldi
+                </a>
+              </div>
+            </nav>
+
+            {/* Actions */}
+            <div className="flex items-center space-x-4">
+              <button 
+                onClick={() => setShowSearch(!showSearch)}
+                className="hidden text-white hover:text-primary md:block"
+              >
+                <Search size={20} />
+              </button>
+              <button 
+                onClick={() => setShowFavorites(true)}
+                className="relative hidden text-white hover:text-primary md:block"
+                title="Visualizza Preferiti"
+              >
+                <Heart size={20} className={favorites.length > 0 ? "fill-white" : ""} />
+                {favorites.length > 0 && (
+                  <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+                    {favorites.length}
+                  </span>
+                )}
+              </button>
+              <button 
+                onClick={() => setShowCart(true)}
+                className="relative text-white hover:text-primary"
+              >
+                <ShoppingCart size={20} />
+                {cartCount > 0 && (
+                  <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => setShowAdminLogin(!showAdminLogin)}
+                className="hidden text-white hover:text-primary md:block"
+                title="Area Amministratore"
+              >
+                <Lock size={20} />
+              </button>
+              <div className="md:hidden">
+                <button
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="text-white hover:text-primary"
+                >
+                  {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Navigation */}
+          {isMenuOpen && (
+            <div className="md:hidden">
+              <div className="space-y-1 border-t border-border px-2 pb-3 pt-2 sm:px-3">
+                <a
+                  href="#nuovi-arrivi"
+                  className="block px-3 py-2 text-foreground hover:text-primary"
+                >
+                  Nuovi Arrivi
+                </a>
+                <a
+                  href="#uomo"
+                  className="block px-3 py-2 text-foreground hover:text-primary"
+                >
+                  Uomo
+                </a>
+                <a
+                  href="#donna"
+                  className="block px-3 py-2 text-foreground hover:text-primary"
+                >
+                  Donna
+                </a>
+                <a
+                  href="#saldi"
+                  className="block px-3 py-2 text-foreground hover:text-primary"
+                >
+                  Saldi
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Search Modal */}
+      {showSearch && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4 pt-24">
+          <Card className="w-full max-w-2xl">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <Search className="h-5 w-5 text-muted-foreground" />
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cerca profumi per nome o categoria..."
+                  className="flex-1 border-0 text-lg focus-visible:ring-0"
+                  autoFocus
+                />
+                <Button
+                  onClick={() => {
+                    setShowSearch(false);
+                    setSearchQuery("");
+                  }}
+                  variant="ghost"
+                  size="sm"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+              {searchQuery && (
+                <div className="mt-4 max-h-96 overflow-y-auto space-y-2">
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product) => (
+                      <div
+                        key={product.id}
+                        className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted cursor-pointer"
+                        onClick={() => {
+                          setShowSearch(false);
+                          setSearchQuery("");
+                          document.getElementById('nuovi-arrivi')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                      >
+                        <img
+                          src={product.image}
+                          alt={product.alt}
+                          className="h-16 w-16 rounded object-cover"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{product.name}</h3>
+                          <p className="text-sm text-muted-foreground">{product.category}</p>
+                          <p className="text-sm font-semibold text-primary">{product.price}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted-foreground py-8">
+                      Nessun prodotto trovato
+                    </p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 to-background py-20 lg:py-32 mt-16">
+        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            <h1 className="mb-6 text-4xl font-black leading-tight text-foreground sm:text-5xl lg:text-6xl">
+              Il Tuo Profumo,{" "}
+              <span className="text-primary">La Tua Essenza</span>
+            </h1>
+
+            <p className="mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-muted-foreground">
+              Scopri le fragranze più esclusive e raffinate del mondo. 
+              Pagamento facile con tutti i metodi disponibili.
+            </p>
+
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Button
+                size="lg"
+                className="bg-primary px-8 py-3 text-primary-foreground hover:bg-primary/90"
+              >
+                Scopri la Collezione
+              </Button>
+              <Button
+                onClick={() => setShowSales(true)}
+                variant="outline"
+                size="lg"
+                className="border-primary bg-transparent px-8 py-3 text-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                Saldi fino al 50%
+              </Button>
+            </div>
+
+            <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {features.map((feature, index) => (
+                <div key={index} className="flex flex-col items-center">
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <feature.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="mb-1 font-semibold text-foreground">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {feature.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories Section */}
+      <section className="bg-muted/30 py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-black text-foreground sm:text-4xl">
+              Categorie Popolari
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              Esplora le nostre collezioni curate per ogni stile
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+            {categories.map((category, index) => (
+              <Card
+                key={index}
+                className="cursor-pointer border-border transition-all hover:scale-105 hover:shadow-lg"
+              >
+                <CardContent className="p-6 text-center">
+                  <h3 className="mb-2 font-bold text-foreground">
+                    {category.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {category.count} prodotti
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Admin Login Modal */}
+      {showAdminLogin && !isAdmin && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Lock className="h-5 w-5" />
+                Area Amministratore
+              </CardTitle>
+              <CardDescription>
+                Inserisci la password per accedere al pannello di controllo
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="admin-password">Password</Label>
+                <Input
+                  id="admin-password"
+                  type="password"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleAdminLogin()}
+                  placeholder="Inserisci password amministratore"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleAdminLogin}
+                  className="flex-1 bg-primary text-primary-foreground"
+                >
+                  Accedi
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowAdminLogin(false);
+                    setAdminPassword("");
+                  }}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Annulla
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Admin Panel */}
+      {showAdminPanel && isAdmin && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-background p-4">
+          <div className="container mx-auto max-w-6xl">
+            <div className="mb-6 flex items-center justify-between">
+              <h1 className="text-3xl font-black text-foreground">
+                Pannello Amministratore
+              </h1>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setShowMessages(true)}
+                  variant="outline"
+                >
+                  Messaggi ({messages.length})
+                </Button>
+                <Button
+                onClick={() => {
+                  setShowChat(true);
+                  setShowMessages(false);
+                }}
+                variant="outline"
+              >
+                Chat Clienti ({chatMessages.filter(m => !m.read).length})
+              </Button>
+              <Button
+                onClick={() => setShowOrders(true)}
+                variant="outline"
+              >
+                Ordini ({orders.length})
+              </Button>
+                <Button
+                  onClick={() => {
+                    setShowAdminPanel(false);
+                    setIsAdmin(false);
+                  }}
+                  variant="outline"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Chiudi
+                </Button>
+              </div>
+            </div>
+
+            {/* Add New Product */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Aggiungi Nuovo Prodotto</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label htmlFor="product-name">Nome Prodotto *</Label>
+                    <Input
+                      id="product-name"
+                      value={newProduct.name}
+                      onChange={(e) =>
+                        setNewProduct({ ...newProduct, name: e.target.value })
+                      }
+                      placeholder="Es. Oud Imperiale"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="product-price">Prezzo *</Label>
+                    <Input
+                      id="product-price"
+                      value={newProduct.price}
+                      onChange={(e) =>
+                        setNewProduct({ ...newProduct, price: e.target.value })
+                      }
+                      placeholder="Es. €89.99"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="product-original-price">
+                      Prezzo Originale (opzionale)
+                    </Label>
+                    <Input
+                      id="product-original-price"
+                      value={newProduct.originalPrice}
+                      onChange={(e) =>
+                        setNewProduct({
+                          ...newProduct,
+                          originalPrice: e.target.value,
+                        })
+                      }
+                      placeholder="Es. €129.99"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="product-badge">Badge</Label>
+                    <select
+                      id="product-badge"
+                      value={newProduct.badge}
+                      onChange={(e) =>
+                        setNewProduct({ ...newProduct, badge: e.target.value })
+                      }
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    >
+                      <option value="NUOVO">NUOVO</option>
+                      <option value="SCONTO">SCONTO</option>
+                      <option value="TREND">TREND</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor="product-category">Categoria *</Label>
+                    <select
+                      id="product-category"
+                      value={newProduct.category}
+                      onChange={(e) =>
+                        setNewProduct({ ...newProduct, category: e.target.value })
+                      }
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    >
+                      <option value="Uomo">Uomo</option>
+                      <option value="Donna">Donna</option>
+                      <option value="Unisex">Unisex</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="product-onSale"
+                    checked={newProduct.onSale}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, onSale: e.target.checked })
+                    }
+                    className="h-4 w-4 rounded border-input"
+                  />
+                  <Label htmlFor="product-onSale">Prodotto in Sconto</Label>
+                </div>
+                <div>
+                  <Label htmlFor="product-image">URL Immagine o Carica File *</Label>
+                  <Input
+                    id="product-image"
+                    value={newProduct.image}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, image: e.target.value })
+                    }
+                    placeholder="Incolla URL immagine"
+                    className="mb-2"
+                  />
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, false)}
+                    className="cursor-pointer"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="product-alt">Descrizione Immagine *</Label>
+                  <Textarea
+                    id="product-alt"
+                    value={newProduct.alt}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, alt: e.target.value })
+                    }
+                    placeholder="Descrivi l'immagine del prodotto"
+                  />
+                </div>
+                <Button
+                  onClick={handleAddProduct}
+                  className="w-full bg-primary text-primary-foreground"
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  Aggiungi Prodotto
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Edit Product Modal */}
+            {editingProduct && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <CardHeader>
+                    <CardTitle>Modifica Prodotto</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <Label>Nome Prodotto</Label>
+                        <Input
+                          value={editingProduct.name}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              name: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label>Prezzo</Label>
+                        <Input
+                          value={editingProduct.price}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              price: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label>Prezzo Originale</Label>
+                        <Input
+                          value={editingProduct.originalPrice || ""}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              originalPrice: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label>Badge</Label>
+                        <select
+                          value={editingProduct.badge}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              badge: e.target.value,
+                            })
+                          }
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
+                          <option value="NUOVO">NUOVO</option>
+                          <option value="SCONTO">SCONTO</option>
+                          <option value="TREND">TREND</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label>Categoria</Label>
+                        <select
+                          value={editingProduct.category}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              category: e.target.value,
+                            })
+                          }
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
+                          <option value="Uomo">Uomo</option>
+                          <option value="Donna">Donna</option>
+                          <option value="Unisex">Unisex</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="edit-onSale"
+                        checked={editingProduct.onSale || false}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            onSale: e.target.checked,
+                          })
+                        }
+                        className="h-4 w-4 rounded border-input"
+                      />
+                      <Label htmlFor="edit-onSale">Prodotto in Sconto</Label>
+                    </div>
+                    <div>
+                      <Label>URL Immagine</Label>
+                      <Input
+                        value={editingProduct.image}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            image: e.target.value,
+                          })
+                        }
+                        className="mb-2"
+                      />
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, true)}
+                        className="cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <Label>Descrizione Immagine</Label>
+                      <Textarea
+                        value={editingProduct.alt}
+                        onChange={(e) =>
+                          setEditingProduct({
+                            ...editingProduct,
+                            alt: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleUpdateProduct}
+                        className="flex-1 bg-primary text-primary-foreground"
+                      >
+                        Salva Modifiche
+                      </Button>
+                      <Button
+                        onClick={() => setEditingProduct(null)}
+                        variant="outline"
+                        className="flex-1"
+                      >
+                        Annulla
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {/* Products List */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Prodotti Esistenti ({products.length})</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {products.map((product) => (
+                    <Card key={product.id} className="overflow-hidden">
+                      <div className="aspect-square overflow-hidden bg-muted">
+                        <img
+                          src={product.image}
+                          alt={product.alt}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <CardContent className="p-4">
+                        <h3 className="mb-1 font-bold">{product.name}</h3>
+                        <p className="mb-1 text-xs text-muted-foreground">
+                          {product.category}
+                        </p>
+                        <p className="mb-3 text-sm text-primary">
+                          {product.price}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => handleEditProduct(product)}
+                            variant="outline"
+                            size="sm"
+                            className="flex-1"
+                          >
+                            <Edit className="mr-1 h-3 w-3" />
+                            Modifica
+                          </Button>
+                          <Button
+                            onClick={() => handleDeleteProduct(product.id)}
+                            variant="destructive"
+                            size="sm"
+                            className="flex-1"
+                          >
+                            <Trash2 className="mr-1 h-3 w-3" />
+                            Elimina
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Shopping Cart Modal */}
+      {showCart && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Carrello ({cartCount} articoli)</CardTitle>
+                <Button
+                  onClick={() => setShowCart(false)}
+                  variant="ghost"
+                  size="sm"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {cart.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">
+                  Il carrello è vuoto
+                </p>
+              ) : (
+                <>
+                  {cart.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-4 border-b border-border pb-4"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.alt}
+                        className="h-20 w-20 rounded object-cover"
+                      />
+                      <div className="flex-1">
+                        <h3 className="font-semibold">{item.name}</h3>
+                        <p className="text-sm text-primary">{item.price}</p>
+                        <div className="mt-2 flex items-center gap-2">
+                          <Button
+                            onClick={() => removeFromCart(item.id)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            -
+                          </Button>
+                          <span className="w-8 text-center">{item.quantity}</span>
+                          <Button
+                            onClick={() => addToCart(item)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            +
+                          </Button>
+                          <Button
+                            onClick={() => deleteFromCart(item.id)}
+                            variant="destructive"
+                            size="sm"
+                            className="ml-auto"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="pt-4">
+                    <div className="flex items-center justify-between text-xl font-bold">
+                      <span>Totale:</span>
+                      <span className="text-primary">
+                        €{getCartTotal().toFixed(2)}
+                      </span>
+                    </div>
+                    <Button
+                      onClick={handleCheckout}
+                      className="mt-4 w-full bg-primary text-primary-foreground"
+                      size="lg"
+                    >
+                      Procedi al Pagamento
+                    </Button>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Checkout Modal */}
+      {showCheckout && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-background p-4">
+          <div className="container mx-auto max-w-4xl">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Completa il tuo Ordine</CardTitle>
+                  <Button
+                    onClick={() => {
+                      setShowCheckout(false);
+                      setShowCart(true);
+                    }}
+                    variant="outline"
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    Torna al Carrello
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handlePlaceOrder} className="space-y-6">
+                  {/* Order Summary */}
+                  <div>
+                    <h3 className="mb-4 text-lg font-semibold">Riepilogo Ordine</h3>
+                    <div className="space-y-2 rounded-lg bg-muted p-4">
+                      {cart.map((item) => (
+                        <div key={item.id} className="flex justify-between">
+                          <span>
+                            {item.name} x {item.quantity}
+                          </span>
+                          <span className="font-semibold">
+                            €{(parseFloat(item.price.replace("€", "")) * item.quantity).toFixed(2)}
+                          </span>
+                        </div>
+                      ))}
+                      <div className="border-t border-border pt-2 flex justify-between text-lg font-bold">
+                        <span>Totale:</span>
+                        <span className="text-primary">€{getCartTotal().toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Customer Information */}
+                  <div>
+                    <h3 className="mb-4 text-lg font-semibold">Informazioni di Spedizione</h3>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <Label htmlFor="name">Nome Completo *</Label>
+                        <Input
+                          id="name"
+                          value={customerInfo.name}
+                          onChange={(e) =>
+                            setCustomerInfo({ ...customerInfo, name: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">Email *</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={customerInfo.email}
+                          onChange={(e) =>
+                            setCustomerInfo({ ...customerInfo, email: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Telefono *</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          value={customerInfo.phone}
+                          onChange={(e) =>
+                            setCustomerInfo({ ...customerInfo, phone: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+                      <div className="relative">
+                        <Label htmlFor="address">Indirizzo Completo *</Label>
+                        <Input
+                          id="address"
+                          value={customerInfo.address}
+                          onChange={(e) => handleAddressChange(e.target.value)}
+                          placeholder="Es. Via Roma 123"
+                          required
+                        />
+                        {showAddressSuggestions && addressSuggestions.length > 0 && (
+                          <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                            {addressSuggestions.map((suggestion, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => {
+                                  setCustomerInfo({ ...customerInfo, address: suggestion });
+                                  setShowAddressSuggestions(false);
+                                }}
+                                className="w-full text-left px-4 py-2 hover:bg-muted text-sm"
+                              >
+                                {suggestion}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <Label htmlFor="city">Città *</Label>
+                        <Input
+                          id="city"
+                          value={customerInfo.city}
+                          onChange={(e) =>
+                            setCustomerInfo({ ...customerInfo, city: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="zipCode">CAP *</Label>
+                        <Input
+                          id="zipCode"
+                          value={customerInfo.zipCode}
+                          onChange={(e) =>
+                            setCustomerInfo({ ...customerInfo, zipCode: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Payment Method */}
+                  <div>
+                    <h3 className="mb-4 text-lg font-semibold">Metodo di Pagamento</h3>
+                    <div className="space-y-4 rounded-lg border border-border p-4">
+                      <p className="text-sm text-muted-foreground">
+                        Accettiamo i seguenti metodi di pagamento sicuri:
+                      </p>
+                      <div className="flex flex-wrap gap-4">
+                        <div className="flex items-center gap-2 rounded-lg bg-muted px-4 py-2">
+                          <CreditCard className="h-5 w-5" />
+                          <span className="text-sm font-medium">Visa</span>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-lg bg-muted px-4 py-2">
+                          <CreditCard className="h-5 w-5" />
+                          <span className="text-sm font-medium">Mastercard</span>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-lg bg-muted px-4 py-2">
+                          <Smartphone className="h-5 w-5" />
+                          <span className="text-sm font-medium">PayPal</span>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-lg bg-muted px-4 py-2">
+                          <Smartphone className="h-5 w-5" />
+                          <span className="text-sm font-medium">Google Pay</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Il pagamento viene processato tramite Revolut in modo sicuro e protetto.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Shipping Info */}
+                  <div className="rounded-lg bg-primary/5 p-4">
+                    <div className="flex items-start gap-3">
+                      <Truck className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <h4 className="font-semibold">Spedizione e Garanzia</h4>
+                        <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                          <li>• Spedizione gratuita su tutti gli ordini</li>
+                          <li>• Consegna prevista entro 10-20 giorni lavorativi</li>
+                          <li>• Se il prodotto non arriva, rimborso completo garantito</li>
+                          <li>• Tracciamento ordine disponibile via email</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg bg-accent/10 border-2 border-accent p-6">
+                    <h3 className="text-xl font-bold text-center mb-4">
+                      📋 Verifica le Tue Informazioni
+                    </h3>
+                    <div className="space-y-2 text-sm mb-4">
+                      <p><strong>Nome:</strong> {customerInfo.name || '(da compilare)'}</p>
+                      <p><strong>Email:</strong> {customerInfo.email || '(da compilare)'}</p>
+                      <p><strong>Telefono:</strong> {customerInfo.phone || '(da compilare)'}</p>
+                      <p><strong>Indirizzo:</strong> {customerInfo.address || '(da compilare)'}</p>
+                      <p><strong>Città:</strong> {customerInfo.city || '(da compilare)'} - <strong>CAP:</strong> {customerInfo.zipCode || '(da compilare)'}</p>
+                    </div>
+                    <Button
+                      type="submit"
+                      className="w-full bg-black text-white hover:bg-black/90"
+                      size="lg"
+                    >
+                      ✅ Conferma e Procedi al Pagamento - €{getCartTotal().toFixed(2)}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Order Confirmation Modal */}
+      {orderPlaced && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-gradient-to-br from-green-50 to-background p-4">
+          <div className="container mx-auto max-w-2xl mt-10">
+            <Card className="border-2 border-green-500/20">
+              <CardContent className="pt-8 pb-8">
+                <div className="text-center mb-6">
+                  <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500 shadow-lg">
+                    <svg
+                      className="h-12 w-12 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={3}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                  <h1 className="mb-3 text-4xl font-black text-green-600">
+                    🎉 Ordine Confermato!
+                  </h1>
+                  <p className="text-lg text-muted-foreground">
+                    Grazie per il tuo acquisto su AromaLuxe
+                  </p>
+                </div>
+
+                <div className="bg-muted/50 rounded-lg p-6 mb-6">
+                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                    <Truck className="h-5 w-5 text-primary" />
+                    Dettagli Spedizione
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-primary font-bold">1</span>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Ordine in elaborazione</p>
+                        <p className="text-sm text-muted-foreground">Il tuo ordine è stato ricevuto e verrà processato a breve</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-primary font-bold">2</span>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Preparazione e spedizione</p>
+                        <p className="text-sm text-muted-foreground">Il pacco verrà preparato e spedito entro 2-3 giorni</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-primary font-bold">3</span>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Consegna prevista</p>
+                        <p className="text-sm text-muted-foreground">Riceverai il tuo ordine entro 10-20 giorni lavorativi</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-primary/5 rounded-lg p-6 mb-6">
+                  <h3 className="font-bold text-lg mb-3">💳 Pagamento e Garanzie</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="flex items-center gap-2">
+                      <span className="text-green-600">✓</span>
+                      Pagamento processato con successo tramite Revolut
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <span className="text-green-600">✓</span>
+                      Spedizione gratuita inclusa
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <span className="text-green-600">✓</span>
+                      Rimborso completo garantito se il prodotto non arriva
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <span className="text-green-600">✓</span>
+                      Email di conferma inviata con numero di tracciamento
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-center space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    Hai bisogno di assistenza? Usa la chat in basso a destra per contattarci!
+                  </p>
+                  <Button
+                    onClick={() => setOrderPlaced(false)}
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    size="lg"
+                  >
+                    Continua lo Shopping
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Favorites Modal */}
+      {showFavorites && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4">
+          <div className="container mx-auto max-w-6xl">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <Heart className="h-5 w-5 fill-primary text-primary" />
+                    I Tuoi Preferiti ({favorites.length})
+                  </CardTitle>
+                  <Button
+                    onClick={() => setShowFavorites(false)}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {favorites.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    {products.filter(p => favorites.includes(p.id)).map((product) => (
+                      <Card key={product.id} className="group overflow-hidden border-border transition-all hover:shadow-xl">
+                        <div className="relative aspect-square overflow-hidden bg-muted">
+                          <img
+                            src={product.image}
+                            alt={product.alt}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                          />
+                          <div className="absolute left-3 top-3">
+                            <span className={`rounded-full px-3 py-1 text-xs font-bold ${
+                              product.badge === "SCONTO"
+                                ? "bg-primary text-primary-foreground"
+                                : product.badge === "NUOVO"
+                                ? "bg-accent text-accent-foreground"
+                                : "bg-secondary text-secondary-foreground"
+                            }`}>
+                              {product.badge}
+                            </span>
+                          </div>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite(product.id);
+                            }}
+                            className="absolute right-3 top-3 rounded-full bg-background p-2"
+                          >
+                            <Heart 
+                              size={20} 
+                              className="fill-primary text-primary"
+                            />
+                          </button>
+                        </div>
+                        <CardContent className="p-6">
+                          <h3 className="mb-1 font-bold text-foreground">
+                            {product.name}
+                          </h3>
+                          <p className="mb-2 text-sm text-muted-foreground">
+                            {product.category}
+                          </p>
+                          <div className="mb-4 flex items-center gap-2">
+                            <span className="text-2xl font-black text-primary">
+                              {product.price}
+                            </span>
+                            {product.originalPrice && (
+                              <span className="text-sm text-muted-foreground line-through">
+                                {product.originalPrice}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                              onClick={() => {
+                                addToCart(product);
+                              }}
+                            >
+                              Aggiungi al Carrello
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleFavorite(product.id);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-12 text-center">
+                    <Heart className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
+                    <h3 className="mb-4 text-2xl font-bold text-foreground">
+                      Nessun prodotto nei preferiti
+                    </h3>
+                    <p className="text-lg text-muted-foreground">
+                      Clicca sul cuore sui prodotti per aggiungerli ai preferiti!
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Sales Modal */}
+      {showSales && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4">
+          <div className="container mx-auto max-w-6xl">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Prodotti in Sconto</CardTitle>
+                  <Button
+                    onClick={() => setShowSales(false)}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {products.filter(p => p.onSale).length > 0 ? (
+                  <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    {products.filter(p => p.onSale).map((product) => (
+                      <Card key={product.id} className="group overflow-hidden border-border transition-all hover:shadow-xl">
+                        <div className="relative aspect-square overflow-hidden bg-muted">
+                          <img
+                            src={product.image}
+                            alt={product.alt}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                          />
+                          <div className="absolute left-3 top-3">
+                            <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
+                              SCONTO
+                            </span>
+                          </div>
+                        </div>
+                        <CardContent className="p-6">
+                          <h3 className="mb-1 font-bold text-foreground">
+                            {product.name}
+                          </h3>
+                          <p className="mb-2 text-sm text-muted-foreground">
+                            {product.category}
+                          </p>
+                          <div className="mb-4 flex items-center gap-2">
+                            <span className="text-2xl font-black text-primary">
+                              {product.price}
+                            </span>
+                            {product.originalPrice && (
+                              <span className="text-sm text-muted-foreground line-through">
+                                {product.originalPrice}
+                              </span>
+                            )}
+                          </div>
+                          <Button
+                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                            onClick={() => {
+                              addToCart(product);
+                              setShowSales(false);
+                            }}
+                          >
+                            Aggiungi al Carrello
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-12 text-center">
+                    <h3 className="mb-4 text-2xl font-bold text-foreground">
+                      Per ora nessun prodotto in sconto
+                    </h3>
+                    <p className="text-lg text-muted-foreground">
+                      Aspetta i prossimi sconti! Iscriviti alla newsletter per non perdere le offerte.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Messages Modal for Admin */}
+      {showMessages && isAdmin && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-background p-4">
+          <div className="container mx-auto max-w-4xl">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Messaggi Ricevuti ({messages.length})</CardTitle>
+                  <Button
+                    onClick={() => setShowMessages(false)}
+                    variant="outline"
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    Chiudi
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {messages.length > 0 ? (
+                  <div className="space-y-4">
+                    {messages.map((message) => (
+                      <Card key={message.id} className="border-border">
+                        <CardContent className="p-4">
+                          <div className="mb-3 flex items-start justify-between">
+                            <div>
+                              <h4 className="font-bold">{message.name}</h4>
+                              <p className="text-sm text-muted-foreground">{message.email}</p>
+                              <p className="text-xs text-muted-foreground mt-1">{message.date}</p>
+                            </div>
+                            <Button
+                              onClick={() => {
+                                if (confirm("Eliminare questo messaggio?")) {
+                                  setMessages(messages.filter(m => m.id !== message.id));
+                                }
+                              }}
+                              variant="destructive"
+                              size="sm"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <p className="text-sm">{message.message}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="py-8 text-center text-muted-foreground">
+                    Nessun messaggio ricevuto
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Orders Modal for Admin */}
+      {showOrders && isAdmin && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-background p-4">
+          <div className="container mx-auto max-w-6xl">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Ordini Ricevuti ({orders.length})</CardTitle>
+                  <Button
+                    onClick={() => setShowOrders(false)}
+                    variant="outline"
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    Chiudi
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {orders.length > 0 ? (
+                  <div className="space-y-4">
+                    {orders.map((order) => (
+                      <Card key={order.id} className="border-border">
+                        <CardContent className="p-6">
+                          <div className="mb-4 flex items-start justify-between">
+                            <div>
+                              <h3 className="text-lg font-bold">Ordine #{order.id}</h3>
+                              <p className="text-sm text-muted-foreground">{order.date}</p>
+                              <span className="mt-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                                {order.status}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-2xl font-bold text-primary mb-2">
+                                €{order.total.toFixed(2)}
+                              </p>
+                              <Button
+                                onClick={() => {
+                                  if (confirm("Sei sicuro di voler eliminare questo ordine?")) {
+                                    setOrders(orders.filter(o => o.id !== order.id));
+                                  }
+                                }}
+                                variant="destructive"
+                                size="sm"
+                              >
+                                <Trash2 className="mr-1 h-3 w-3" />
+                                Elimina
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          <div className="mb-4 rounded-lg bg-muted p-4">
+                            <h4 className="mb-2 font-semibold">Informazioni Cliente:</h4>
+                            <div className="grid gap-2 text-sm">
+                              <p><strong>Nome:</strong> {order.customer.name}</p>
+                              <p><strong>Email:</strong> {order.customer.email}</p>
+                              <p><strong>Telefono:</strong> {order.customer.phone}</p>
+                              <p><strong>Indirizzo:</strong> {order.customer.address}</p>
+                              <p><strong>Città:</strong> {order.customer.city}</p>
+                              <p><strong>CAP:</strong> {order.customer.zipCode}</p>
+                              <p><strong>Paese:</strong> {order.customer.country}</p>
+                            </div>
+                          </div>
+
+                          <div>
+                            <h4 className="mb-2 font-semibold">Prodotti Ordinati:</h4>
+                            <div className="space-y-2">
+                              {order.items.map((item: any) => (
+                                <div key={item.id} className="flex justify-between border-b border-border pb-2">
+                                  <span>{item.name} x {item.quantity}</span>
+                                  <span className="font-semibold">
+                                    €{(parseFloat(item.price.replace("€", "")) * item.quantity).toFixed(2)}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="py-8 text-center text-muted-foreground">
+                    Nessun ordine ricevuto ancora
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Product Detail Modal */}
+      {showProductDetail && selectedProduct && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4">
+          <div className="container mx-auto max-w-4xl">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>{selectedProduct.name}</CardTitle>
+                  <Button
+                    onClick={() => {
+                      setShowProductDetail(false);
+                      setSelectedProduct(null);
+                    }}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <img
+                      src={selectedProduct.image}
+                      alt={selectedProduct.alt}
+                      className="w-full rounded-lg"
+                    />
+                    <div className="grid grid-cols-3 gap-2">
+                      <img
+                        src={selectedProduct.image}
+                        alt="Vista laterale del prodotto"
+                        className="w-full rounded-lg cursor-pointer hover:opacity-75"
+                      />
+                      <img
+                        src={selectedProduct.image}
+                        alt="Vista posteriore del prodotto"
+                        className="w-full rounded-lg cursor-pointer hover:opacity-75"
+                      />
+                      <img
+                        src={selectedProduct.image}
+                        alt="Dettaglio ravvicinato del prodotto"
+                        className="w-full rounded-lg cursor-pointer hover:opacity-75"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <span className="inline-block rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground mb-3">
+                        {selectedProduct.badge}
+                      </span>
+                      <h2 className="text-3xl font-bold mb-2">{selectedProduct.name}</h2>
+                      <p className="text-muted-foreground mb-4">{selectedProduct.category}</p>
+                      <div className="flex items-center gap-3 mb-6">
+                        <span className="text-4xl font-black text-primary">
+                          {selectedProduct.price}
+                        </span>
+                        {selectedProduct.originalPrice && (
+                          <span className="text-xl text-muted-foreground line-through">
+                            {selectedProduct.originalPrice}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-lg">Descrizione</h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        Una fragranza esclusiva e raffinata che incarna eleganza e sofisticatezza. 
+                        Perfetta per ogni occasione, questa essenza unica lascia un'impressione duratura.
+                      </p>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-lg">Pagamenti Accettati</h3>
+                      <div className="flex flex-wrap gap-2">
+                        <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-1.5">
+                          <CreditCard className="h-4 w-4" />
+                          <span className="text-xs">Visa</span>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-1.5">
+                          <CreditCard className="h-4 w-4" />
+                          <span className="text-xs">Mastercard</span>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-1.5">
+                          <Smartphone className="h-4 w-4" />
+                          <span className="text-xs">PayPal</span>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-1.5">
+                          <Smartphone className="h-4 w-4" />
+                          <span className="text-xs">Google Pay</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-lg">Contatta il Venditore</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Hai domande su questo prodotto? Usa la chat per ricevere assistenza immediata.
+                      </p>
+                      {localStorage.getItem('hasOrdered') === 'true' ? (
+                        <button 
+                          onClick={() => {
+                            setShowProductDetail(false);
+                            setShowChat(true);
+                          }}
+                          className="flex items-center justify-center gap-2 w-full rounded-lg bg-primary/10 px-4 py-3 text-primary hover:bg-primary/20 transition-colors"
+                        >
+                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                          </svg>
+                          <span className="text-sm font-semibold">Apri Chat</span>
+                        </button>
+                      ) : (
+                        <a 
+                          href="mailto:aromaluxe025@gmail.com"
+                          className="flex items-center justify-center gap-2 w-full rounded-lg bg-primary/10 px-4 py-3 text-primary hover:bg-primary/20 transition-colors"
+                        >
+                          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                          </svg>
+                          <span className="text-sm font-semibold">Contatta via Email</span>
+                        </a>
+                      )}
+                    </div>
+
+                    <Button
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                      size="lg"
+                      onClick={() => {
+                        addToCart(selectedProduct);
+                        setShowProductDetail(false);
+                      }}
+                    >
+                      Aggiungi al Carrello
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Featured Products */}
+      <section id="nuovi-arrivi" className="py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-black text-foreground sm:text-4xl">
+              Prodotti in Evidenza
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              I capi più amati dai nostri clienti
+            </p>
+            {isAdmin && (
+              <Button
+                onClick={() => setShowAdminPanel(true)}
+                className="mt-4 bg-primary text-primary-foreground"
+              >
+                Gestisci Prodotti
+              </Button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {products.map((product) => (
+              <Card 
+                key={product.id} 
+                className="group overflow-hidden border-border transition-all hover:shadow-xl cursor-pointer"
+                onClick={() => {
+                  setSelectedProduct(product);
+                  setShowProductDetail(true);
+                }}
+              >
+                <div className="relative aspect-square overflow-hidden bg-muted">
+                  <img
+                    src={product.image}
+                    alt={product.alt}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute left-3 top-3">
+                    <span className={`rounded-full px-3 py-1 text-xs font-bold ${
+                      product.badge === "SCONTO"
+                        ? "bg-primary text-primary-foreground"
+                        : product.badge === "NUOVO"
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-secondary text-secondary-foreground"
+                    }`}>
+                      {product.badge}
+                    </span>
+                  </div>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(product.id);
+                    }}
+                    className={`absolute right-3 top-3 rounded-full bg-background p-2 transition-all ${
+                      favorites.includes(product.id) 
+                        ? "opacity-100" 
+                        : "opacity-0 group-hover:opacity-100"
+                    }`}
+                  >
+                    <Heart 
+                      size={20} 
+                      className={favorites.includes(product.id) ? "fill-primary text-primary" : "text-foreground"}
+                    />
+                  </button>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="mb-1 font-bold text-foreground">
+                    {product.name}
+                  </h3>
+                  <p className="mb-2 text-sm text-muted-foreground">
+                    {product.category}
+                  </p>
+                  <div className="mb-4 flex items-center gap-2">
+                    <span className="text-2xl font-black text-primary">
+                      {product.price}
+                    </span>
+                    {product.originalPrice && (
+                      <span className="text-sm text-muted-foreground line-through">
+                        {product.originalPrice}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                      onClick={() => addToCart(product)}
+                    >
+                      Aggiungi
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedProduct(product);
+                        setShowProductDetail(true);
+                      }}
+                    >
+                      Dettagli
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Payment Methods Section */}
+      <section className="bg-muted/30 py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-black text-foreground sm:text-4xl">
+              Tutti i Metodi di Pagamento Accettati
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              Paga come preferisci in totale sicurezza
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {paymentMethods.map((method, index) => (
+              <Card key={index} className="border-border">
+                <CardContent className="flex flex-col items-center p-6 text-center">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                    <method.icon className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-foreground">
+                    {method.name}
+                  </h3>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-sm text-muted-foreground">
+              Transazioni sicure protette da crittografia SSL • Nessun costo
+              aggiuntivo
+            </p>
+          </div>
+        </div>
+      </section>
+
+      
+
+      {/* Chat Modal for Customers */}
+      {showChat && !isAdmin && (
+        <div className="fixed bottom-4 right-4 z-50 w-96 max-h-[600px] flex flex-col">
+          <Card>
+            <CardHeader className="bg-primary text-primary-foreground">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">Chat con il Venditore</CardTitle>
+                <Button
+                  onClick={() => setShowChat(false)}
+                  variant="ghost"
+                  size="sm"
+                  className="text-primary-foreground hover:bg-primary-foreground/20"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 space-y-4 max-h-[400px] overflow-y-auto">
+              {chatMessages.length > 0 ? (
+                chatMessages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.isAdmin ? 'justify-start' : 'justify-end'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-lg p-3 ${
+                        msg.isAdmin
+                          ? 'bg-muted text-foreground'
+                          : 'bg-primary text-primary-foreground'
+                      }`}
+                    >
+                      <p className="text-sm">{msg.message}</p>
+                      <p className="text-xs opacity-70 mt-1">{msg.time}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-muted-foreground py-8">
+                  Nessun messaggio. Inizia una conversazione!
+                </p>
+              )}
+            </CardContent>
+            <div className="p-4 border-t">
+              <div className="flex gap-2">
+                <Input
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="Scrivi un messaggio..."
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && chatInput.trim()) {
+                      const newMsg = {
+                        id: Date.now(),
+                        message: chatInput,
+                        time: new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }),
+                        isAdmin: false,
+                        read: false,
+                        customerEmail: localStorage.getItem('customerEmail') || ''
+                      };
+                      setChatMessages([...chatMessages, newMsg]);
+                      setChatInput('');
+                    }
+                  }}
+                />
+                <Button
+                  onClick={() => {
+                    if (chatInput.trim()) {
+                      const newMsg = {
+                        id: Date.now(),
+                        message: chatInput,
+                        time: new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }),
+                        isAdmin: false,
+                        read: false,
+                        customerEmail: localStorage.getItem('customerEmail') || ''
+                      };
+                      setChatMessages([...chatMessages, newMsg]);
+                      setChatInput('');
+                    }
+                  }}
+                  className="bg-primary text-primary-foreground"
+                >
+                  Invia
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Chat Modal for Admin */}
+      {showChat && isAdmin && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-background p-4">
+          <div className="container mx-auto max-w-4xl">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Chat con i Clienti</CardTitle>
+                  <Button
+                    onClick={() => setShowChat(false)}
+                    variant="outline"
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    Chiudi
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {chatMessages.length > 0 ? (
+                  <div className="space-y-4">
+                    <div className="max-h-[500px] overflow-y-auto space-y-3 p-4 bg-muted/30 rounded-lg">
+                      {chatMessages.map((msg) => (
+                        <div
+                          key={msg.id}
+                          className={`flex ${msg.isAdmin ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`max-w-[70%] rounded-lg p-3 ${
+                              msg.isAdmin
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-background border border-border'
+                            }`}
+                          >
+                            {!msg.isAdmin && (
+                              <p className="text-xs font-semibold mb-1">{msg.customerEmail}</p>
+                            )}
+                            <p className="text-sm">{msg.message}</p>
+                            <p className="text-xs opacity-70 mt-1">{msg.time}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <Input
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        placeholder="Rispondi al cliente..."
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter' && chatInput.trim()) {
+                            const newMsg = {
+                              id: Date.now(),
+                              message: chatInput,
+                              time: new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }),
+                              isAdmin: true,
+                              read: true,
+                              customerEmail: 'Admin'
+                            };
+                            setChatMessages([...chatMessages, newMsg]);
+                            setChatInput('');
+                            
+                            // Simula notifica push al cliente
+                            console.log('📱 NOTIFICA INVIATA AL CLIENTE');
+                            console.log('Nuovo messaggio dal venditore AromaLuxe!');
+                          }
+                        }}
+                      />
+                      <Button
+                        onClick={() => {
+                          if (chatInput.trim()) {
+                            const newMsg = {
+                              id: Date.now(),
+                              message: chatInput,
+                              time: new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }),
+                              isAdmin: true,
+                              read: true,
+                              customerEmail: 'Admin'
+                            };
+                            setChatMessages([...chatMessages, newMsg]);
+                            setChatInput('');
+                            
+                            // Simula notifica push al cliente
+                            console.log('📱 NOTIFICA INVIATA AL CLIENTE');
+                            console.log('Nuovo messaggio dal venditore AromaLuxe!');
+                          }
+                        }}
+                        className="bg-primary text-primary-foreground"
+                      >
+                        Invia
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="py-8 text-center text-muted-foreground">
+                    Nessun messaggio in chat
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Chat Button for Customers (only if has ordered) */}
+      {!isAdmin && localStorage.getItem('hasOrdered') === 'true' && !showChat && (
+        <button
+          onClick={() => setShowChat(true)}
+          className="fixed bottom-4 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-110 transition-transform"
+        >
+          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
+        </button>
+      )}
+
+      {/* Contact Section */}
+      <section className="bg-primary/5 py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl">
+            <div className="mb-12 text-center">
+              <h2 className="mb-4 text-3xl font-black text-foreground">
+                Contattaci
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Hai domande? Siamo qui per aiutarti
+              </p>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-1">
+              <Card className="border-border mx-auto max-w-md">
+                <CardContent className="p-6 text-center">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <svg
+                      className="h-6 w-6 text-primary"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                  </div>
+                  <h3 className="mb-2 font-semibold">Email di Supporto</h3>
+                  <a
+                    href="mailto:aromaluxe025@gmail.com"
+                    className="text-primary hover:underline"
+                  >
+                    aromaluxe025@gmail.com
+                  </a>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    Ti risponderemo entro 24 ore
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="mt-8 border-border">
+              <CardContent className="p-6">
+                <h3 className="mb-4 font-semibold">Invia un Messaggio</h3>
+                <form className="space-y-4">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <Label htmlFor="contact-name">Nome</Label>
+                      <Input id="contact-name" placeholder="Il tuo nome" />
+                    </div>
+                    <div>
+                      <Label htmlFor="contact-email">Email</Label>
+                      <Input
+                        id="contact-email"
+                        type="email"
+                        placeholder="tua@email.com"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="contact-message">Messaggio</Label>
+                    <Textarea
+                      id="contact-message"
+                      placeholder="Come possiamo aiutarti?"
+                      rows={4}
+                      value={customerInfo.name}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                    />
+                  </div>
+                  <Button 
+                    type="submit"
+                    className="w-full bg-primary text-primary-foreground"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const form = e.currentTarget.closest('form');
+                      const formData = new FormData(form as HTMLFormElement);
+                      const name = (form?.querySelector('#contact-name') as HTMLInputElement)?.value;
+                      const email = (form?.querySelector('#contact-email') as HTMLInputElement)?.value;
+                      const message = (form?.querySelector('#contact-message') as HTMLTextAreaElement)?.value;
+                      
+                      if (name && email && message) {
+                        const newMessage = {
+                          id: Date.now(),
+                          date: new Date().toLocaleString('it-IT'),
+                          name,
+                          email,
+                          message
+                        };
+                        setMessages([newMessage, ...messages]);
+                        alert("Messaggio inviato con successo! Ti risponderemo presto.");
+                        (form as HTMLFormElement).reset();
+                      } else {
+                        alert("Compila tutti i campi!");
+                      }
+                    }}
+                  >
+                    Invia Messaggio
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-card">
+        <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+            {/* Company Info */}
+            <div className="col-span-1 md:col-span-2">
+              <h3 className="mb-4 text-2xl font-black text-primary">
+                AromaLuxe
+              </h3>
+              <p className="mb-4 max-w-md text-muted-foreground">
+                Il tuo negozio online di fiducia per fragranze di lusso e 
+                profumi di nicchia. Qualità, eleganza e pagamenti sicuri garantiti.
+              </p>
+              <div className="flex space-x-4">
+                <a
+                  href="#"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+                <a
+                  href="#"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <Facebook className="h-5 w-5" />
+                </a>
+                <a
+                  href="#"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <Twitter className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+
+            {/* Shop Links */}
+            <div>
+              <h4 className="mb-4 font-semibold text-foreground">Negozio</h4>
+              <ul className="space-y-2">
+                <li>
+                  <a
+                    href="#"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Nuovi Arrivi
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Profumi Uomo
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Profumi Donna
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Set Regalo
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Support Links */}
+            <div>
+              <h4 className="mb-4 font-semibold text-foreground">Supporto</h4>
+              <ul className="space-y-2">
+                <li>
+                  <a
+                    href="#"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Contattaci
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Spedizioni
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Resi e Cambi
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    FAQ
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-8 flex flex-col items-center justify-between border-t border-border pt-8 sm:flex-row">
+            <p className="text-sm text-muted-foreground">
+              © 2025 AromaLuxe. Tutti i diritti riservati.
+            </p>
+            <div className="mt-4 flex space-x-6 sm:mt-0">
+              <a
+                href="#"
+                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                Privacy Policy
+              </a>
+              <a
+                href="#"
+                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                Termini e Condizioni
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+  );
+}
